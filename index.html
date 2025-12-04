@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honkai: Star Rail - Khám Phá Vũ Trụ</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải Tone.js cho âm thanh -->
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.7.58/build/Tone.js"></script>
+    <!-- Thiết lập font Inter và cấu hình Tailwind -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        :root {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rail-primary': '#1e3a8a', /* Xanh đậm */
+                        'rail-secondary': '#6366f1', /* Tím/Xanh tím */
+                        'rail-dark': '#0f172a', /* Màu nền chính */
+                        'rail-accent': '#fcd34d', /* Vàng/Gold */
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-rail-dark text-gray-100 min-h-screen">
+
+    <!-- Script Xử lý Âm thanh (Tone.js) -->
+    <script>
+        // Tạo một không gian âm nhạc khoa học viễn tưởng đơn giản (simulated BGM)
+        const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "triangle" },
+            envelope: {
+                attack: 0.1,
+                decay: 0.2,
+                sustain: 0.5,
+                release: 1
+            }
+        }).toDestination();
+
+        // Chuỗi nốt nhạc đơn giản tạo không khí vũ trụ (Scale F Minor Pentatonic)
+        const notes = ["F3", "Ab3", "Bb3", "C4", "Eb4", "F4"];
+        let isPlaying = false;
+        let loop;
+
+        const startBGM = () => {
+            if (isPlaying) return;
+            Tone.start();
+
+            let index = 0;
+            // Lặp lại chuỗi nốt nhạc
+            loop = new Tone.Loop(time => {
+                const note = notes[index % notes.length];
+                synth.triggerAttackRelease(note, "4n", time);
+                index++;
+            }, "2n").start(0);
+
+            Tone.Transport.bpm.value = 60;
+            Tone.Transport.start();
+            isPlaying = true;
+
+            // Cập nhật nút
+            const audioButton = document.getElementById('audio-button');
+            if (audioButton) {
+                audioButton.textContent = '⏸️ Tắt Nhạc Nền';
+            }
+        };
+
+        const stopBGM = () => {
+            if (!isPlaying) return;
+            Tone.Transport.stop();
+            if (loop) loop.dispose();
+            isPlaying = false;
+            
+            // Cập nhật nút
+            const audioButton = document.getElementById('audio-button');
+            if (audioButton) {
+                audioButton.textContent = '🎵 Bật Nhạc Nền';
+            }
+        };
+
+        const toggleBGM = () => {
+            if (isPlaying) {
+                stopBGM();
+            } else {
+                startBGM();
+            }
+        };
+
+        // Gắn sự kiện cho nút sau khi DOM được tải
+        window.addEventListener('load', () => {
+            const audioButton = document.getElementById('audio-button');
+            if (audioButton) {
+                audioButton.addEventListener('click', toggleBGM);
+            }
+        });
+    </script>
+
+    <!-- Menu Điều Hướng -->
+    <nav class="sticky top-0 z-50 bg-rail-dark/95 backdrop-blur-sm shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Tên Game -->
+                <a href="#" class="flex-shrink-0 text-2xl font-bold text-rail-accent tracking-wider">
+                    Star Rail
+                </a>
+                <!-- Các liên kết điều hướng -->
+                <div class="hidden md:flex space-x-4">
+                    <a href="#gioi-thieu" class="text-gray-300 hover:bg-rail-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300">Giới Thiệu</a>
+                    <a href="#nhan-vat" class="text-gray-300 hover:bg-rail-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300">Nhân Vật</a>
+                    <a href="#the-gioi" class="text-gray-300 hover:bg-rail-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300">Thế Giới</a>
+                    <a href="#trailer" class="text-gray-300 hover:bg-rail-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300">Video</a>
+                    <a href="#dang-ky" class="text-gray-300 hover:bg-rail-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300">Đăng Ký</a>
+                </div>
+
+                <!-- Nút BGM -->
+                <button id="audio-button" class="bg-rail-secondary hover:bg-rail-primary text-white font-semibold py-1 px-3 rounded-full transition duration-300 text-sm">
+                    🎵 Bật Nhạc Nền
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Bố cục chính -->
+    <main class="pt-8 pb-16">
+        
+        <!-- Phần Banner Chính (Hero) - Hình Nền -->
+        <header id="gioi-thieu" class="relative overflow-hidden bg-cover bg-center h-[60vh] md:h-[80vh] flex items-center shadow-2xl"
+                style="background-image: url('tai-Honkai-Star-Rail.jpg');">
+            
+            <!-- Lớp phủ tối -->
+            <div class="absolute inset-0 bg-rail-dark/60 backdrop-blur-sm"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-rail-accent drop-shadow-lg">
+                    Honkai: Star Rail
+                </h1>
+                <p class="mt-4 text-xl sm:text-2xl text-gray-200 font-light max-w-3xl mx-auto">
+                    Bước lên Tàu Astral Express, vượt qua các vì sao và khám phá những bí ẩn của vũ trụ trong chuyến phiêu lưu giả tưởng khoa học này.
+                </p>
+                <div class="mt-8">
+                    <a href="#trailer" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-rail-dark bg-rail-accent hover:bg-yellow-300 transition duration-300 transform hover:scale-105">
+                        Xem Trailer Ngay!
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 space-y-16">
+
+            <!-- Phần Giới Thiệu & Cốt Truyện -->
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="space-y-6 p-6 bg-gray-800/50 rounded-xl shadow-lg border border-rail-secondary/20">
+                    <h2 class="text-3xl font-bold text-rail-accent border-b-2 border-rail-accent/50 pb-2">Giới Thiệu</h2>
+                    <p class="text-lg leading-relaxed">
+                        Honkai: Star Rail là một trò chơi nhập vai (RPG) theo lượt, lấy bối cảnh vũ trụ rộng lớn, nơi người chơi sẽ điều khiển một nhóm nhân vật mang trong mình sức mạnh "Stellaron" bí ẩn. Cốt truyện xoay quanh chuyến hành trình trên Tàu Astral Express, khám phá các Hành tinh và đối đầu với thế lực hủy diệt của "Aeon".
+                    </p>
+                    <p class="text-lg leading-relaxed">
+                        Game kết hợp giữa đồ họa phong cách anime tuyệt đẹp, lối chơi chiến thuật sâu sắc và khám phá thế giới mở tuyến tính, mang đến trải nghiệm phiêu lưu khoa học viễn tưởng chưa từng có.
+                    </p>
+                </div>
+
+                <div class="p-6 bg-gray-800/50 rounded-xl shadow-lg border border-rail-secondary/20">
+                    <h2 class="text-3xl font-bold text-rail-accent border-b-2 border-rail-accent/50 pb-2">Cốt Truyện Chính</h2>
+                    <p class="text-lg leading-relaxed">
+                        Bạn thức dậy trên trạm không gian Herta mà không có ký ức, và phát hiện ra mình đã bị cấy ghép một Stellaron - một vật thể có khả năng gây tai họa lớn. Cùng với những người bạn mới, bạn được chào đón lên Tàu Astral Express để đi qua các dải ngân hà, tìm kiếm cội nguồn của Stellaron và ngăn chặn các mối đe dọa vũ trụ do các Aeon (vị thần) gây ra.
+                    </p>
+                    <p class="text-lg italic text-gray-400 mt-4">
+                        "Số phận của các vì sao đã được khắc ghi, nhưng liệu bạn có thể thay đổi chúng?"
+                    </p>
+                    <!-- Hình ảnh Cốt truyện (Placeholder) -->
+                    <img src="Hình 1.jpg" alt="Hình ảnh bối cảnh vũ trụ bí ẩn" class="w-full h-40 object-cover mt-4 rounded-lg shadow-md">
+                </div>
+            </div>
+
+            <!-- Phần Video Trailer -->
+            <div id="trailer" class="text-center p-6 bg-gray-900/70 rounded-xl shadow-2xl">
+                <h2 class="text-4xl font-bold mb-8 text-rail-accent">Video Trailer Chính Thức</h2>
+                <div class="aspect-w-16 aspect-h-9 w-full rounded-xl overflow-hidden shadow-2xl">
+                    <!-- Nhúng Video Youtube (Ví dụ) -->
+                     <iframe width="560" height="315" src="https://www.youtube.com/embed/JYP-2oaIaLg?si=oL_fDnQ9cq-yZgEm" 
+                     title="YouTube video player" 
+                     frameborder="0" 
+                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                     referrerpolicy="strict-origin-when-cross-origin" 
+                     allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Phần Danh Sách và Bảng -->
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                
+                <!-- Danh Sách Nhân Vật Nổi Bật -->
+                <div id="nhan-vat" class="p-6 bg-gray-800/50 rounded-xl shadow-lg border border-rail-secondary/20">
+                    <h2 class="text-3xl font-bold text-rail-accent border-b-2 border-rail-accent/50 pb-2 mb-6">Nhân Vật Nổi Bật</h2>
+                    <ul class="space-y-4">
+                        <!-- Item Danh sách 1 -->
+                        <li class="flex items-start space-x-3">
+                            <span class="text-rail-accent font-bold text-xl">⭐</span>
+                            <div>
+                                <h3 class="font-semibold text-xl text-white">March 7th</h3>
+                                <p class="text-gray-400">Cô gái đáng yêu và lạc quan, sử dụng cung tên và là người bảo hộ quan trọng trên Astral Express.</p>
+                                <!-- Hình ảnh Placeholder -->
+                                <img src="today-is-march-7th-day-v0-wao05mqmsrmc1.webp" alt="Hình ảnh March 7th" class="w-16 h-16 rounded-full object-cover mt-2 shadow-md">
+                            </div>
+                        </li>
+                        <!-- Item Danh sách 2 -->
+                        <li class="flex items-start space-x-3">
+                            <span class="text-rail-accent font-bold text-xl">⭐</span>
+                            <div>
+                                <h3 class="font-semibold text-xl text-white">Dan Heng</h3>
+                                <p class="text-gray-400">Chiến binh lạnh lùng, sử dụng giáo, mang theo bí ẩn về quá khứ của mình.</p>
+                                <!--Hình ảnh Placeholder -->
+                                <img src="e7e5eea285eb8bec1d417e300bf661a9_1801876661315357191.webp" alt="Hình ảnh Dan Heng" class="w-16 h-16 rounded-full object-cover mt-2 shadow-md">
+                            </div>
+                        </li>
+                        <!-- Item Danh sách 3 -->
+                        <li class="flex items-start space-x-3">
+                            <span class="text-rail-accent font-bold text-xl">⭐</span>
+                            <div>
+                                <h3 class="font-semibold text-xl text-white">Kafka</h3>
+                                <p class="text-gray-400">Một thành viên bí ẩn của Stellaron Hunters, đóng vai trò quan trọng trong việc đưa nhân vật chính vào cuộc phiêu lưu.</p>
+                                <!--Hình ảnh Placeholder -->
+                                <img src="3f0ae0e8e7cf4b32262f69807191832c_4236980934140135295.webp" alt="Hình ảnh Kafka" class="w-16 h-16 rounded-full object-cover mt-2 shadow-md">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Bảng Thế Giới & Hành Tinh -->
+                <div id="the-gioi" class="p-6 bg-gray-800/50 rounded-xl shadow-lg border border-rail-secondary/20 overflow-x-auto">
+                    <h2 class="text-3xl font-bold text-rail-accent border-b-2 border-rail-accent/50 pb-2 mb-6">Các Thế Giới Đáng Chú Ý</h2>
+                    <table class="min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden">
+                        <thead class="bg-gray-700">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-rail-accent uppercase tracking-wider rounded-tl-lg">Hành Tinh</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-rail-accent uppercase tracking-wider">Văn Hóa</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-rail-accent uppercase tracking-wider rounded-tr-lg">Đặc Điểm Nổi Bật</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-gray-900 divide-y divide-gray-700">
+                            <tr class="hover:bg-gray-800 transition duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-white">Herta Space Station</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">Nghiên cứu khoa học</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">Nơi bắt đầu chuyến phiêu lưu, nơi nghiên cứu của hàng nghìn học giả vũ trụ.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800 transition duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-white">Jarilo-VI</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">Phục hưng thế giới</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">Hành tinh bị đóng băng vĩnh cửu, chiến đấu chống lại Quân Đoàn Phản vật chất.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800 transition duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-white">The Xianzhou Luofu</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">Phong cách Á Đông</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">Tàu không gian khổng lồ, với mục tiêu săn lùng Aeon Trù Phú.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Phần Form Đăng Ký -->
+            <div id="dang-ky" class="max-w-xl mx-auto p-8 bg-rail-primary/40 rounded-2xl shadow-2xl border border-rail-secondary/30">
+                <h2 class="text-3xl font-bold text-rail-accent text-center mb-4">Tham Gia Cộng Đồng</h2>
+                <p class="text-center text-gray-300 mb-8">Đăng ký nhận bản tin để không bỏ lỡ thông tin cập nhật, sự kiện và mã quà tặng mới nhất!</p>
+                <form class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Họ và Tên</label>
+                        <input type="text" id="name" name="name" placeholder="Tên của bạn"
+                               class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:ring-rail-accent focus:border-rail-accent text-white" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Địa Chỉ Email</label>
+                        <input type="email" id="email" name="email" placeholder="example@email.com"
+                               class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:ring-rail-accent focus:border-rail-accent text-white" required>
+                    </div>
+                    
+                    <!-- Radio buttons -->
+                    <fieldset>
+                        <legend class="text-sm font-medium text-gray-300 mb-2">Bạn quan tâm nhất đến:</legend>
+                        <div class="mt-2 space-y-2">
+                            <div class="flex items-center">
+                                <input id="gameplay" name="interest" type="radio" value="gameplay" class="h-4 w-4 text-rail-accent border-gray-700 focus:ring-rail-accent">
+                                <label for="gameplay" class="ml-3 text-sm text-gray-300">Lối chơi và Chiến thuật</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="story" name="interest" type="radio" value="story" class="h-4 w-4 text-rail-accent border-gray-700 focus:ring-rail-accent">
+                                <label for="story" class="ml-3 text-sm text-gray-300">Cốt truyện và Nhân vật</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" 
+                            class="w-full mt-6 px-4 py-3 border border-transparent text-base font-bold rounded-lg shadow-lg text-rail-dark bg-rail-accent hover:bg-yellow-300 transition duration-300 transform hover:scale-[1.02]">
+                        Đăng Ký Ngay
+                    </button>
+                    <!-- Message box for form submission (replaces alert) -->
+                    <div id="form-message" class="text-center mt-4 text-green-400 font-semibold hidden">
+                        Đăng ký thành công! Cảm ơn bạn đã tham gia cộng đồng.
+                    </div>
+                </form>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900/80 mt-16 py-8 shadow-inner border-t border-rail-secondary/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+            <p>&copy; 2024 Honkai: Star Rail Fansite. Mọi nội dung, hình ảnh và video được lấy từ Internet cho mục đích giới thiệu.</p>
+            <p class="mt-2 text-sm">Thiết kế bởi Baiku - Sử dụng Tailwind CSS và Tone.js.</p>
+        </div>
+    </footer>
+
+    <!-- Script Xử lý Form -->
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Lấy dữ liệu (Chỉ mô phỏng)
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            console.log('Thông tin đăng ký:', { name, email });
+
+            // Hiển thị thông báo thành công
+            const messageBox = document.getElementById('form-message');
+            messageBox.textContent = `Chào mừng ${name}! Đăng ký email (${email}) thành công.`;
+            messageBox.classList.remove('hidden');
+            
+            // Xóa form sau 3 giây (mô phỏng)
+            setTimeout(() => {
+                this.reset();
+                messageBox.classList.add('hidden');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
